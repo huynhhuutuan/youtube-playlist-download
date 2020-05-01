@@ -45,7 +45,9 @@ def downloadFile(url, fileName):
 options = Options()
 options.add_argument('--headless')
 options.add_argument('--disable-gpu')
-driver = webdriver.Chrome('/home/lrc/applications/chromedriver', options=options)
+#uncomment the line below and change it according to your chrome/chromium executable location
+#options.binary_location = "/usr/bin/chromium"
+driver = webdriver.Chrome(options=options)
 playlistURL = input('Enter the URL of the playlist: ')
 print('Please wait while the program collects playlist information...')
 print('Each video takes around 8 seconds...')
