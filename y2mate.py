@@ -1,5 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 import time
 from requests import get
 
@@ -23,17 +26,20 @@ def getDownloadURL(videoURL):
     while not loaded:
         try:
             driver.get('https://y2mate.com')
-            time.sleep(1)
+            WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.ID, "txt-url")))
             txtUrlBox = driver.find_element_by_id('txt-url')
             txtUrlBox.send_keys(videoURL)
             txtUrlBox.submit()
-            time.sleep(3)
-            a360p=driver.find_element_by_partial_link_text('360p').find_element_by_xpath("../../td[3]/a")
+            WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, "360p")))
+            driver.find_element_by_partial_link_text('360p').find_element_by_xpath("../../td[3]/a").click()
+            WebDriverWait(driver, 15).until(EC.element_to_be_clickable((By.ID, "dl-btns")))
+            time.sleep(6)
+            href = driver.find_element_by_id("dl-btns").find_element_by_tag_name("a").get_attribute("href")
+            print('[GetDownloadURL] Done: ' + href)
+            return href
             loaded = True
         except Exception as e:
-            print("  Failed:\n")
-    print('[GetDownloadURL] Done with ' + str(len(downloadURL)+1))
-    return a360p.get_attribute('href')
+            print("  Failed: " + str(e))
 
 def downloadFile(url, fileName):
     with open(fileName, "wb") as file:
@@ -57,7 +63,7 @@ for videoURL in videosURL:
     downloadURL.append(getDownloadURL(videoURL))
 driver.close()
 print('Finished, thanks for waiting!')
-yesOrNo = input('Write video URLs to a file? (y/n)')
+yesOrNo = input('Write video URLs to a file? (y/n) ')
 if yesOrNo == 'y':
     fileName = input('Name of the file: ')
     f = open(fileName, "w+")
@@ -65,7 +71,7 @@ if yesOrNo == 'y':
         f.write(i+'\n')
     f.close()
     print('Finished!')
-yesOrNo = input('Download all videos to the current directory now? (y/n)')
+yesOrNo = input('Download all videos to the current directory now? (y/n) ')
 if yesOrNo == 'y':
     m = 1
     for i in downloadURL:

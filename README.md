@@ -40,10 +40,14 @@ or
 python3 y2mate.py
 ```
 
+## Todo
+
+- Use video name instead of numbers as file names
+
 ## Troubleshooting
 
 ### 'chromedriver' executable needs to be in PATH
 
 - make sure the chromedriver executable is in your OS's PATH environment variable
 
-### 
+### If strange errors arise, try rerunning the script a few times
